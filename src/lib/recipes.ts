@@ -217,6 +217,33 @@ export async function searchRecipesByIngredients(names: string[]): Promise<Recip
 }
 
 // ============================================================
+// SEARCH recipes by name (case-insensitive, partial match)
+// ============================================================
+export async function searchRecipesByName(query: string): Promise<Recipe[]> {
+  const { data, error } = await supabase
+    .from('recipes')
+    .select('*')
+    .ilike('title', `%${query}%`)
+    .order('created_at', { ascending: false })
+
+  if (error) throw error
+  return data as Recipe[]
+}
+
+// ============================================================
+// FETCH all recipes visible to the current user
+// ============================================================
+export async function getAllVisibleRecipes(): Promise<Recipe[]> {
+  const { data, error } = await supabase
+    .from('recipes')
+    .select('*')
+    .order('created_at', { ascending: false })
+
+  if (error) throw error
+  return data as Recipe[]
+}
+
+// ============================================================
 // FETCH public recipes (for the browse page)
 // ============================================================
 export async function getPublicRecipes(): Promise<Recipe[]> {

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { getIngredientNames, searchRecipesByIngredients } from '../lib/recipes'
+import { getIngredientNames, searchRecipesByIngredients, searchRecipesByName, getAllVisibleRecipes } from '../lib/recipes'
 import type { Recipe } from '../types'
 
 export default function SearchPage() {
@@ -8,6 +8,7 @@ export default function SearchPage() {
   const [selected, setSelected] = useState<string[]>([])
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<Recipe[] | null>(null)
+  const [nameQuery, setNameQuery] = useState('')
   const [searching, setSearching] = useState(false)
   const [error, setError] = useState('')
   const [dropdownOpen, setDropdownOpen] = useState(false)
@@ -45,7 +46,7 @@ export default function SearchPage() {
     setResults(null)
   }
 
-  const handleSearch = async () => {
+  const handleIngredientSearch = async () => {
     if (selected.length === 0) return
     setSearching(true)
     setError('')
@@ -59,15 +60,71 @@ export default function SearchPage() {
     }
   }
 
+  const handleNameSearch = async () => {
+    if (!nameQuery.trim()) return
+    setSearching(true)
+    setError('')
+    try {
+      const data = await searchRecipesByName(nameQuery.trim())
+      setResults(data)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Search failed.')
+    } finally {
+      setSearching(false)
+    }
+  }
+
+  const handleShowAll = async () => {
+    setSearching(true)
+    setError('')
+    try {
+      const data = await getAllVisibleRecipes()
+      setResults(data)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load recipes.')
+    } finally {
+      setSearching(false)
+    }
+  }
+
   return (
     <div style={styles.page}>
       <div style={styles.header}>
-        <h1 style={styles.title}>Search by ingredient</h1>
-        <p style={styles.sub}>Pick one or more ingredients to find every recipe that uses all of them.</p>
+        <h1 style={styles.title}>Search</h1>
+      </div>
+
+      {/* Recipe name search */}
+      <div style={styles.pickerCard}>
+        <div style={styles.sectionLabel}>Search by name</div>
+        <div style={styles.nameRow}>
+          <input
+            style={styles.comboInput}
+            type="text"
+            placeholder="e.g. pasta, chicken soup..."
+            value={nameQuery}
+            onChange={(e) => setNameQuery(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleNameSearch()}
+          />
+          <button
+            style={{ ...styles.searchBtn, width: 'auto', padding: '0.65rem 1.25rem', opacity: nameQuery.trim() ? 1 : 0.45 }}
+            onClick={handleNameSearch}
+            disabled={!nameQuery.trim() || searching}
+          >
+            Search
+          </button>
+        </div>
+      </div>
+
+      <div style={styles.dividerRow}>
+        <div style={styles.dividerLine} />
+        <span style={styles.dividerText}>or</span>
+        <div style={styles.dividerLine} />
       </div>
 
       {/* Ingredient picker */}
       <div style={styles.pickerCard}>
+        <div style={styles.sectionLabel}>Search by ingredients</div>
+        <p style={styles.sectionSub}>Pick one or more ingredients to find every recipe that uses all of them.</p>
         <div style={styles.chips}>
           {selected.map((name) => (
             <span key={name} style={styles.chip}>
@@ -102,12 +159,22 @@ export default function SearchPage() {
 
         <button
           style={{ ...styles.searchBtn, opacity: selected.length === 0 ? 0.45 : 1 }}
-          onClick={handleSearch}
+          onClick={handleIngredientSearch}
           disabled={selected.length === 0 || searching}
         >
           {searching ? 'Searching...' : 'Find recipes'}
         </button>
       </div>
+
+      <div style={styles.dividerRow}>
+        <div style={styles.dividerLine} />
+        <span style={styles.dividerText}>or</span>
+        <div style={styles.dividerLine} />
+      </div>
+
+      <button style={styles.showAllBtn} onClick={handleShowAll} disabled={searching}>
+        {searching ? 'Loading...' : 'Show all recipes'}
+      </button>
 
       {error && <p style={styles.error}>{error}</p>}
 
@@ -157,6 +224,13 @@ const styles: Record<string, React.CSSProperties> = {
   dropdown: { position: 'absolute' as const, top: 'calc(100% + 4px)', left: 0, right: 0, background: 'var(--warm-white)', border: '1px solid var(--border)', borderRadius: '6px', zIndex: 50, maxHeight: '220px', overflowY: 'auto' as const, boxShadow: '0 4px 12px rgba(0,0,0,0.08)' },
   dropdownItem: { display: 'block', width: '100%', textAlign: 'left' as const, background: 'none', border: 'none', padding: '0.55rem 0.9rem', fontFamily: 'var(--font-body)', fontSize: '0.875rem', color: 'var(--ink)', cursor: 'pointer' },
   searchBtn: { background: 'var(--rust)', color: 'white', border: 'none', borderRadius: '6px', padding: '0.65rem 1.5rem', fontFamily: 'var(--font-body)', fontSize: '0.95rem', fontWeight: 500, cursor: 'pointer', width: '100%' },
+  sectionLabel: { fontFamily: 'var(--font-mono)', fontSize: '0.68rem', textTransform: 'uppercase' as const, letterSpacing: '0.1em', color: 'var(--ink-muted)', marginBottom: '0.75rem' },
+  sectionSub: { fontSize: '0.85rem', color: 'var(--ink-muted)', marginBottom: '0.75rem' },
+  nameRow: { display: 'flex', gap: '0.5rem' },
+  dividerRow: { display: 'flex', alignItems: 'center', gap: '1rem', margin: '1.25rem 0' },
+  dividerLine: { flex: 1, height: '1px', background: 'var(--border)' },
+  dividerText: { fontFamily: 'var(--font-mono)', fontSize: '0.7rem', textTransform: 'uppercase' as const, letterSpacing: '0.1em', color: 'var(--ink-muted)' },
+  showAllBtn: { width: '100%', background: 'none', border: '1px solid var(--border)', borderRadius: '6px', padding: '0.65rem', fontFamily: 'var(--font-body)', fontSize: '0.9rem', color: 'var(--ink-muted)', cursor: 'pointer' },
   error: { color: 'var(--error)', fontFamily: 'var(--font-mono)', fontSize: '0.82rem', padding: '0.5rem 0.75rem', background: '#fef2f2', borderRadius: '5px', marginBottom: '1rem' },
   results: { marginTop: '0.5rem' },
   resultsLabel: { fontFamily: 'var(--font-mono)', fontSize: '0.68rem', textTransform: 'uppercase' as const, letterSpacing: '0.1em', color: 'var(--ink-muted)', marginBottom: '1rem' },
