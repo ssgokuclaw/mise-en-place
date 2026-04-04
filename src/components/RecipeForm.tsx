@@ -13,7 +13,7 @@
 // ============================================================
 
 import { useState } from 'react'
-import { importRecipeFromUrl } from '../lib/importRecipe'
+// import { importRecipeFromUrl } from '../lib/importRecipe'
 import type { RecipeFormData } from '../types'
 
 interface RecipeFormProps {
@@ -43,39 +43,8 @@ const EMPTY_FORM: RecipeFormData = {
 export default function RecipeForm({ initialData, onSubmit, saving }: RecipeFormProps) {
   // useState stores the form data. When any field changes, React re-renders the form.
   const [form, setForm] = useState<RecipeFormData>(initialData ?? EMPTY_FORM)
-  const [urlInput, setUrlInput] = useState('')
-  const [importing, setImporting] = useState(false)
-  const [importError, setImportError] = useState('')
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [extraOpen, setExtraOpen] = useState(false)
-
-  // ---- URL Import ----
-  const handleImport = async () => {
-    if (!urlInput.trim()) return
-    setImporting(true)
-    setImportError('')
-    try {
-      const parsed = await importRecipeFromUrl(urlInput.trim())
-      // Populate the form with the imported data
-      setForm({
-        title:       parsed.title,
-        description: parsed.description,
-        prep_time:   parsed.prep_time,
-        cook_time:   parsed.cook_time,
-        servings:    parsed.servings || 0,
-        difficulty:  '',
-        tags:        [],
-        is_public:   true,
-        source_url:  urlInput.trim(),
-        ingredients: parsed.ingredients.map((ing, i) => ({ ...ing, sort_order: i })),
-        steps:       parsed.steps.map((s, i) => ({ ...s, tip: '', sort_order: i })),
-      })
-    } catch (err) {
-      setImportError(err instanceof Error ? err.message : 'Import failed')
-    } finally {
-      setImporting(false)
-    }
-  }
 
   // ---- Field helpers ----
   // Update a top-level field (e.g. title, description)
@@ -151,34 +120,6 @@ export default function RecipeForm({ initialData, onSubmit, saving }: RecipeForm
   // ---- Render ----
   return (
     <div style={styles.container}>
-
-      {/* URL IMPORT */}
-      <div style={styles.importBox}>
-        <div style={styles.importLabel}>⚡ Advanced — Import from URL</div>
-        <p style={styles.importDesc}>
-          Paste any recipe URL and we'll strip the noise — no story, no ads, just the recipe.
-        </p>
-        <div style={styles.importRow}>
-          <input
-            style={styles.urlInput}
-            type="url"
-            placeholder="https://somerecipesite.com/pasta-with-17-paragraphs..."
-            value={urlInput}
-            onChange={(e) => setUrlInput(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleImport()}
-          />
-          <button style={styles.importBtn} onClick={handleImport} disabled={importing}>
-            {importing ? 'Importing...' : 'Import'}
-          </button>
-        </div>
-        {importError && <p style={styles.errorText}>{importError}</p>}
-      </div>
-
-      <div style={styles.dividerRow}>
-        <div style={styles.dividerLine} />
-        <span style={styles.dividerText}>or enter manually</span>
-        <div style={styles.dividerLine} />
-      </div>
 
       {/* TITLE */}
       <div style={styles.formGroup}>

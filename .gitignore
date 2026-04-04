@@ -7,6 +7,7 @@ dist/
 # Environment files — NEVER commit these, they contain secret API keys!
 .env.local
 .env.*.local
+.env.example
 
 # Editor files
 .vscode/
