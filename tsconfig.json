@@ -23,7 +23,8 @@
     // Warn about function parameters you declare but never use
     "noUnusedParameters": true,
     // Ensure switch statements handle all cases
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "types": ["vite/client"]
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]
