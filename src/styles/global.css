@@ -1,0 +1,101 @@
+/* ============================================================
+   styles/global.css — Global styles for mise en place
+   ============================================================
+   These styles are imported once in main.tsx and apply globally.
+   Component-specific styles are defined inline (as style objects)
+   or in their own CSS files to keep things organised.
+   ============================================================ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /* Colour palette — change these to retheme the whole app */
+  --cream:       #F7F3EE;
+  --warm-white:  #FDFAF7;
+  --ink:         #1C1814;
+  --ink-soft:    #3D342C;
+  --ink-muted:   #7A6E65;
+  --rust:        #B85C38;
+  --rust-light:  #D4795A;
+  --sage:        #7A8C6E;
+  --gold:        #C4963A;
+  --border:      #E0D8CF;
+  --shadow:      rgba(28,24,20,0.08);
+  --error:       #C0392B;
+  --success:     #27AE60;
+
+  /* Typography */
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body:    'Lora', Georgia, serif;
+  --font-mono:    'DM Mono', 'Courier New', monospace;
+}
+
+html {
+  /* Smooth scrolling for anchor links */
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--cream);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  /* Prevents layout shift when a scrollbar appears */
+  overflow-y: scroll;
+}
+
+/* Remove default button styles — we style them ourselves */
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+}
+
+/* Remove default link styles */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Make images responsive by default */
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* Utility class to visually hide something but keep it accessible
+   (e.g. for screen reader labels) */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Focus styles — important for keyboard accessibility */
+:focus-visible {
+  outline: 2px solid var(--rust);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+/* Page transition animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.page-enter {
+  animation: fadeIn 0.25s ease forwards;
+}

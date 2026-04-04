@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    // Target modern browsers — means TypeScript compiles to ES2020 JavaScript
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    // Which built-in type definitions to include (browser APIs, modern JS)
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    // We're using Vite, which handles the module bundling
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    // Don't emit JS files — Vite handles that
+    "noEmit": true,
+    // Enable JSX support for React
+    "jsx": "react-jsx",
+    // Strict mode catches a lot of common bugs — highly recommended when learning
+    "strict": true,
+    // Warn about variables you declare but never use
+    "noUnusedLocals": true,
+    // Warn about function parameters you declare but never use
+    "noUnusedParameters": true,
+    // Ensure switch statements handle all cases
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["src"],
+  "references": [{ "path": "./tsconfig.node.json" }]
+}
