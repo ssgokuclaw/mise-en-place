@@ -99,3 +99,28 @@ img {
 .page-enter {
   animation: fadeIn 0.25s ease forwards;
 }
+
+/* Recipe page two-column layout — collapses to single column on mobile */
+.recipe-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 2.5rem;
+  align-items: start;
+}
+
+.recipe-ingredients-sticky {
+  position: sticky;
+  top: 80px;
+}
+
+@media (max-width: 640px) {
+  .recipe-layout {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
+
+  .recipe-ingredients-sticky {
+    position: static !important;
+    top: auto !important;
+  }
+}

@@ -15,9 +15,12 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { getMyRecipes } from '../lib/recipes'
 import RecipeCard from '../components/RecipeCard'
+import { useAuth } from '../hooks/useAuth'
 import type { Recipe } from '../types'
 
 export default function HomePage() {
+  const { user } = useAuth()
+
   // All recipes from the database
   const [recipes, setRecipes] = useState<Recipe[]>([])
   // Whether we're still fetching from the DB
@@ -30,6 +33,10 @@ export default function HomePage() {
   // useEffect runs after the component first renders.
   // The empty [] dependency array means "run once on mount".
   useEffect(() => {
+    if (!user) {
+      setLoading(false)
+      return
+    }
     async function load() {
       try {
         const data = await getMyRecipes()
@@ -41,7 +48,7 @@ export default function HomePage() {
       }
     }
     load()
-  }, [])
+  }, [user])
 
   // Filter recipes client-side as the user types.
   // .toLowerCase() makes the search case-insensitive.
@@ -53,6 +60,26 @@ export default function HomePage() {
       r.tags?.some((t) => t.toLowerCase().includes(q))
     )
   })
+
+  // Guest landing — shown when not logged in
+  if (!user) {
+    return (
+      <div style={styles.page} className="page-enter">
+        <div style={styles.hero}>
+          <h1 style={styles.tagline}>
+            Your recipes.<br /><em style={styles.em}>Nothing else.</em>
+          </h1>
+          <p style={styles.sub}>
+            No life stories. No ads. No pop-ups. Just the ingredients and the steps.
+          </p>
+          <div style={styles.actions}>
+            <Link to="/auth" style={styles.primaryBtn}>Sign in to get started</Link>
+            <Link to="/search" style={styles.secondaryBtn}>Browse public recipes</Link>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div style={styles.page} className="page-enter">
@@ -152,7 +179,7 @@ const styles: Record<string, React.CSSProperties> = {
     lineHeight: 1.6,
     marginBottom: '1.5rem',
   },
-  actions: { display: 'flex', gap: '0.75rem' },
+  actions: { display: 'flex', gap: '0.75rem', flexWrap: 'wrap' as const },
   primaryBtn: {
     display: 'inline-block',
     background: 'var(--rust)',
@@ -163,6 +190,18 @@ const styles: Record<string, React.CSSProperties> = {
     padding: '0.65rem 1.4rem',
     borderRadius: '6px',
     textDecoration: 'none',
+  },
+  secondaryBtn: {
+    display: 'inline-block',
+    background: 'transparent',
+    color: 'var(--ink-muted)',
+    fontFamily: 'var(--font-body)',
+    fontSize: '0.9rem',
+    fontWeight: 500,
+    padding: '0.65rem 1.4rem',
+    borderRadius: '6px',
+    textDecoration: 'none',
+    border: '1px solid var(--border)',
   },
   searchRow: { marginBottom: '1.5rem' },
   searchInput: {

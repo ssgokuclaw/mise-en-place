@@ -209,12 +209,6 @@ export default function AuthPage() {
         {/* ---- SIGN IN ---- */}
         {mode === 'signin' && (
           <>
-            <button style={styles.googleBtn} onClick={handleGoogle}>
-              <GoogleIcon />
-              Continue with Google
-            </button>
-            <div style={styles.divider}>or</div>
-
             <div style={styles.formGroup}>
               <label style={styles.label}>Email or username</label>
               <input
@@ -252,12 +246,6 @@ export default function AuthPage() {
         {/* ---- SIGN UP ---- */}
         {mode === 'signup' && (
           <>
-            <button style={styles.googleBtn} onClick={handleGoogle}>
-              <GoogleIcon />
-              Continue with Google
-            </button>
-            <div style={styles.divider}>or create with</div>
-
             {/* Email vs Username-only toggle */}
             <div style={styles.methodTabs}>
               <button

@@ -41,11 +41,8 @@ export default function App() {
         <Route path="/recipe/:id" element={<RecipePage />} />
         <Route path="/search" element={<SearchPage />} />
 
-        {/* Protected routes — redirect to /auth if not logged in */}
-        <Route
-          path="/"
-          element={user ? <HomePage /> : <Navigate to="/auth" />}
-        />
+        {/* Home — public; shows guest landing or personal recipes depending on auth */}
+        <Route path="/" element={<HomePage />} />
         <Route
           path="/add"
           element={user ? <AddRecipePage /> : <Navigate to="/auth" />}

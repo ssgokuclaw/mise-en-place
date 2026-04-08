@@ -209,10 +209,10 @@ export default function RecipePage() {
       )}
 
       {/* Main content: ingredients sidebar + steps */}
-      <div style={styles.layout}>
+      <div className="recipe-layout">
 
         {/* Ingredients panel */}
-        <div style={styles.ingredientsPanel}>
+        <div style={styles.ingredientsPanel} className="recipe-ingredients-sticky">
           <div style={styles.panelTitle}>Ingredients</div>
 
           {/* Servings scaler */}
@@ -309,8 +309,8 @@ const styles: Record<string, React.CSSProperties> = {
   confirmBox: { background: 'var(--warm-white)', border: '1px solid var(--border)', borderRadius: '8px', padding: '1.25rem', marginBottom: '1.5rem' },
   confirmDeleteBtn: { background: 'var(--error)', color: 'white', border: 'none', borderRadius: '5px', padding: '0.45rem 1rem', fontFamily: 'var(--font-body)', fontSize: '0.85rem', cursor: 'pointer' },
   cancelBtn: { background: 'none', border: '1px solid var(--border)', borderRadius: '5px', padding: '0.45rem 1rem', fontFamily: 'var(--font-body)', fontSize: '0.85rem', cursor: 'pointer', color: 'var(--ink-muted)' },
-  layout: { display: 'grid', gridTemplateColumns: '260px 1fr', gap: '2.5rem', alignItems: 'start' },
-  ingredientsPanel: { background: 'var(--warm-white)', border: '1px solid var(--border)', borderRadius: '10px', padding: '1.25rem', position: 'sticky', top: '80px' },
+  layout: {},
+  ingredientsPanel: { background: 'var(--warm-white)', border: '1px solid var(--border)', borderRadius: '10px', padding: '1.25rem' },
   panelTitle: { fontFamily: 'var(--font-display)', fontSize: '1.05rem', fontWeight: 600, color: 'var(--ink)', marginBottom: '0.75rem', paddingBottom: '0.75rem', borderBottom: '1px solid var(--border)' },
   servingsRow: { display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.75rem' },
   servingsLabel: { fontFamily: 'var(--font-mono)', fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--ink-muted)', flex: 1 },
